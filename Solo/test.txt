@@ -1,5 +1,8 @@
-teste
+def add(a,b)
+	return a + b
 
-+test
+def sub(a,b)
+	return a -b
 
-+branch
+def mul(a,b);
+	return a*b
