@@ -20,30 +20,45 @@ public class DAO {
 	String query;
 	CreateXml xml  = new CreateXml();
 	Parsing parsing = new Parsing();
-	ImageDown down = new ImageDown();
+	imageDown down = new imageDown();
 	
 	
+//회원번호 초기화
+	public int userNo(){
+		int cnt = 0;
+		try {
+			connDB();
+			query = "SELECT count(USER_NO) con FROM mem";
+			//System.out.println("SQL : " + query);
+			rs = stmt.executeQuery(query);
+				while (rs.next()) {
+					cnt =Integer.parseInt(rs.getString("CON"));
+					System.out.println(cnt);
+				}
+			}
 
+		 catch(Exception e) {
+			e.printStackTrace();
+		}
+	return cnt;
+	}//userNo() end
 	
 //회원정보 db저장
-	public void register(String name,String reg_no,String id,String pwd,String address) {
+	public int register(String name,String reg_no,String id,String pwd,String address,int cont) {
 		connDB();
-			
+		int cnt = cont;		
 		try {	
-			    query = "INSERT INTO MEM values('"+name+"','"+reg_no+"','"+id+"','"+pwd+"','"+address+"')";
+			    query = "INSERT INTO MEM values('"+name+"','"+reg_no+"','"+id+"','"+pwd+"','"+address+"',"+cont+")";
 				rs = stmt.executeQuery(query);
-				
 				JOptionPane.showMessageDialog(null,"회원가입 되었습니다.");
-				
-				
+				cnt++;
 		   				    
-			//System.out.println(checkId(id));	
+			System.out.println(checkId(id));	
 		}catch (SQLException e) {
-			
 			JOptionPane.showMessageDialog(null,"이미 등록된 회원입니다.");
 			
 		}
-		
+		return cnt;
 	} //register() end
 	
 	
@@ -61,7 +76,7 @@ public class DAO {
 			rs = stmt.executeQuery(query);
 			while (rs.next()) {
 			if(id.equals(rs.getString("ID"))) {
-				//System.out.println(rs.getString("ID"));
+				System.out.println(rs.getString("ID"));
 				check = false;
 			}else {
 				check = true;
@@ -75,23 +90,6 @@ public class DAO {
 		
 		return check;
 	}//checkId end
-
-//현재 회원 설정
-	public String currentUser(String id) {
-		connDB();
-	    String current = "가나다";
-		query = "SELECT reg_no From MEM WHERE id ='"+id+"'";
-		try {
-			rs = stmt.executeQuery(query);
-			while(rs.next()) {
-			current = rs.getString("REG_NO");
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return current;
-	}
-	
 	
 //로그인
 	public boolean login(String id, String pwd) {
@@ -103,9 +101,9 @@ public class DAO {
 			rs = stmt.executeQuery(query);
 		while (rs.next()) {
 				if(id.equals(rs.getString("ID"))) {
-					//System.out.println("ID 실행");
+					System.out.println("ID 실행");
 					if(rs.getString("PWD").equals(pwd)) {
-						//System.out.println("pwd 실행");
+						System.out.println("pwd 실행");
 						check = true;
 						break;
 					}else {
@@ -149,7 +147,7 @@ public class DAO {
 			}
 		} catch (SQLException e) {
 			
-			//e.printStackTrace();
+			e.printStackTrace();
 		}
 		
 		return vector;
@@ -180,7 +178,7 @@ public class DAO {
 			}
 		} catch (SQLException e) {
 			
-			//e.printStackTrace();
+			e.printStackTrace();
 		}
 		
 		return vector;
@@ -211,60 +209,23 @@ public class DAO {
 							}
 		} catch (SQLException e) {
 			
-			//e.printStackTrace();
+			e.printStackTrace();
 		}
 		
 		return vector;
 		
 	}
-
-//북마크 정보 조회
-	public Vector bookmarkInfo(String currentUser) {
-		connDB();
-		Vector<String> vector = new Vector<String>();
-				
-		query = "SELECT title, AREA_NAME, COMMEN ,bookmark.CONT_ID FROM list, BOOKMARK,AREA, CATEGORY WHERE list.CONT_ID = bookmark.CONT_ID AND"
-				+ " reg_no ='"+currentUser+"'AND list.AREA_NO = area.AREA_NO AND list.CAT_NO = category.CAT_NO ";
-		
-		try {
-			rs=stmt.executeQuery(query);
-			while(rs.next()) {
-				vector.add("     Title :"+rs.getString("TITLE")+"   "+"Area:"+rs.getString("AREA_NAME")+"           분류 : "+rs.getString("COMMEN")+"    "+rs.getString("CONT_ID")+"\n");
-				
-				//System.out.println("Title:"+rs.getString("TITLE")+ "      Area : "+rs.getNString("AREA_NAME"));
-				}
-		} catch (SQLException e) {
-			
-			//e.printStackTrace();
-		}
-		
-		return vector;
-		
-	}
-//북마크 취소하기
-	public void cancel(int contId) {
-		connDB();
-		System.out.println("북마크취소 실행");
-		query = "DELETE FROM BOOKMARK WHERE cont_id ="+contId;
-		try {
-			rs = stmt.executeQuery(query);
-		}catch(Exception e) {
-			//e.printStackTrace();
-		}
-				
-	}
-	
 	
 //관광지 정보 조회(cont_id)
 	public int contIdInfo(String sel) {
 		connDB();
 		int i=0;
 		query = "SELECT cont_id FROM LIST l WHERE TITLE  = "+"'"+sel+"'";
-		//System.out.println(query);
+		System.out.println(query);
 		try {
 			rs =stmt.executeQuery(query);
 			while(rs.next()) {
-				//System.out.println(rs.getString("CONT_ID"));
+				System.out.println(rs.getString("CONT_ID"));
 				i = Integer.parseInt(rs.getString("CONT_ID"));
 			}
 		} catch (SQLException e) {
@@ -278,21 +239,6 @@ public class DAO {
 	public void infomation(int contId) {
 		connDB();
 		xml.info(contId);
-								
-	}
-	
-//즐겨찾기(bookmark btn)
-	public void bookmark(String currentUser, int contId) {
-		connDB();
-		query = "INSERT INTO BOOKMARK values('"+currentUser+"',"+contId+")";
-		System.out.println(query);
-		try {
-			rs =stmt.executeQuery(query);
-			JOptionPane.showMessageDialog(null, "등록되었습니다.");			
-		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(null, "이미 등록되었습니다.");
-			//e.printStackTrace();
-		}
 		
 	}
 	

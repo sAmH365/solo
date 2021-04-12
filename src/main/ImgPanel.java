@@ -3,7 +3,6 @@ package main;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.Toolkit;
 import java.io.File;
 
 import javax.swing.ImageIcon;
@@ -21,12 +20,11 @@ class ImagePanel extends JPanel{
 	
 	}
 	
-
-
+	
 	public void paintComponent(Graphics g) {
 		super.paintComponents(g);
 		g.drawImage(img, 0, 0, null);
 	}
-
+	
 }
 
