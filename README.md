@@ -1,5 +1,5 @@
 # solo
-## 자바 이용한 그린아카데미 개인 프로젝트
+## java를 이용한 그린아카데미 개인 프로젝트
 ![image](https://user-images.githubusercontent.com/72846155/216851978-5c930083-7725-43a2-a51b-2c50059dd9e1.png)
 
 - java Swing 컴포넌트로 UI 구현
